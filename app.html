@@ -1,0 +1,1137 @@
+<!doctype html>
+<html>
+<meta charset=utf8>
+<title>semichins</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<script src="sm2/script/soundmanager2.js"></script>
+<style>
+body {
+    background: url(bg.jpg);
+}
+
+#p1, #p2 {
+    position: absolute;
+    height: 115px;
+    width: 55px;
+    background: bottom left no-repeat;
+    z-index: 1;
+    top: 88px;
+}
+#p1 { left: 2px; background-image: url(pngs/bodies/knight.left.png); }
+#p2 { left: 255px; background-image: url(pngs/bodies/robot.right.png); }
+#board {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    border-collapse: collapse;
+    z-index: 2;
+}
+#board td {
+    border: 1px solid #990;
+}
+#board td a {
+    display: block;
+    width: 51px;
+    height: 51px;
+    line-height: 35px;
+    text-decoration: none;
+    color: black;
+    background: rgba(255, 255, 255, 0.3);
+    text-align: center;
+}
+ul, li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.cards li a {
+    display: block;
+    width: 50px;
+    height: 70px;
+    border: 1px solid black;
+    position: absolute;
+    border-radius: 5px;
+    background: white center center no-repeat;
+}
+#p1cards li a { 
+    top: 300px;
+    -moz-transition: -moz-transform 0.2s ease;
+    -webkit-transition: -webkit-transform 0.2s ease;
+    -o-transition: -o-transform 0.2s ease;
+    -ms-transition: -ms-transform 0.2s ease;
+    transition: transform 0.2s ease;
+}
+#p2cards li a {
+    top: 380px; 
+    background: url(cardback.gif) top left repeat; 
+    -moz-transition: -moz-transform 0.2s ease;
+    -webkit-transition: -webkit-transform 0.2s ease;
+    -o-transition: -o-transform 0.2s ease;
+    -ms-transition: -ms-transform 0.2s ease;
+    transition: transform 0.2s ease;
+}
+.cards li:nth-child(1) a { left: 10px; }
+.cards li:nth-child(2) a { left: 70px; }
+.cards li:nth-child(3) a { left: 130px; }
+.cards li:nth-child(4) a { left: 190px; }
+.cards li:nth-child(5) a { left: 250px; }
+/* !important to override the #p?cards declarations above, particularly #p2cards */
+.cards li a.c10 { background: #ffa url(cards/1-0.png) center center no-repeat !important; border-color: #ff0; }
+.cards li a.c11 { background: #faf url(cards/1-1.png) center center no-repeat !important; border-color: #f0f; }
+.cards li a.c20 { background: #aff url(cards/2-0.png) center center no-repeat !important; border-color: #0ff; }
+.cards li a.c21 { background: #ffcc92 url(cards/2-1.png) center center no-repeat !important; border-color: #f80; }
+.cards li a.c22 { background: #ccff92 url(cards/2-2.png) center center no-repeat !important; border-color: #8f0; }
+
+.cards.c10 a.c10 { box-shadow: 0 0 15px #ff0; background-color: #ff0 !important; }
+.cards.c11 a.c11 { box-shadow: 0 0 15px #f0f; background-color: #f0f !important; }
+.cards.c20 a.c20 { box-shadow: 0 0 15px #0ff; background-color: #0ff !important; }
+.cards.c21 a.c21 { box-shadow: 0 0 15px #f80; background-color: #f80 !important; }
+.cards.c22 a.c22 { box-shadow: 0 0 15px #8f0; background-color: #8f0 !important; }
+
+#board a.c10 { background-color: rgba(255,255,0,0.7); }
+#board a.c11 { background-color: rgba(255,0,255,0.7); }
+#board a.c20 { background-color: rgba(0,255,255,0.7); }
+#board a.c21 { background-color: rgba(255,128,0,0.7); }
+#board a.c22 { background-color: rgba(128,255,0,0.7); }
+
+#board a.p2.c10, #board a.p2.c11, #board a.p2.c20, #board a.p2.c21, #board a.p2.c22 {
+    background-color: red;
+    -moz-animation: pulseRedBackground 0.5s linear infinite alternate;
+    -webkit-animation: pulseRedBackground 0.5s linear infinite alternate;
+    -ms-animation: pulseRedBackground 0.5s linear infinite alternate;
+    -o-animation: pulseRedBackground 0.5s linear infinite alternate;
+    animation: pulseRedBackground 0.5s linear infinite alternate;
+}
+@-moz-keyframes pulseRedBackground { 0% { background-color: white; } 100% { background-color: red; } }
+@-webkit-keyframes pulseRedBackground { 0% { background-color: white; } 100% { background-color: red; } }
+@-ms-keyframes pulseRedBackground { 0% { background-color: white; } 100% { background-color: red; } }
+@-o-keyframes pulseRedBackground { 0% { background-color: white; } 100% { background-color: red; } }
+@keyframes pulseRedBackground { 0% { background-color: white; } 100% { background-color: red; } }
+
+#banner {
+    background: white;
+    position: absolute;
+    top: 80px;
+    left: 15px;
+    width: 204px;
+    height: 105px;
+    border: 2px solid black;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 35px;
+    color: red;
+    font-family: Ubuntu, sans-serif;
+    font-size: 32px;
+    padding: 20px 40px;
+    font-weight: bold;
+}
+
+#play {
+    background: white;
+    position: absolute;
+    top: 320px;
+    left: 15px;
+    width: 204px;
+    height: 50px;
+    border: 2px solid black;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 50px;
+    color: red;
+    font-family: Ubuntu, sans-serif;
+    font-size: 32px;
+    padding: 20px 40px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+#scores {
+    background: white;
+    position: absolute;
+    top: 410px;
+    left: 15px;
+    width: 204px;
+    height: 20px;
+    border: 2px solid black;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 20px;
+    color: black;
+    font-family: Ubuntu, sans-serif;
+    font-size: 20px;
+    padding: 2px 40px;
+    font-weight: bold;
+}
+
+#choices a {
+    display: block;
+    position: absolute;
+    top: 230px;
+    left: 15px;
+    height: 51px;
+    width: 51px;
+    text-align: center;
+    background: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 2px;
+}
+#choices li:nth-child(1) a { left: 15px; top: 20px; }
+#choices li:nth-child(2) a { left: 92px; top: 20px; }
+#choices li:nth-child(3) a { left: 170px; top: 20px; }
+#choices li:nth-child(4) a { left: 245px; top: 20px; }
+#choices li:nth-child(5) a { left: 15px; top: 235px; }
+#choices li:nth-child(6) a { left: 92px; top: 235px; }
+#choices li:nth-child(7) a { left: 170px; top: 235px; }
+#choices li:nth-child(8) a { left: 245px; top: 235px; }
+
+body .game, body .game_and_beginning, body .beginning { display: none; }
+body.beginning .beginning, body.beginning .game_and_beginning,
+    body.game .game, body.game .game_and_beginning { display: block; }
+
+#board a.p1 {
+    background: center center no-repeat #afa;
+    background-image: url(pngs/heads/knight.left.png);
+}
+#board a.p2 {
+    background: center center no-repeat #aaf;
+    background-image: url(pngs/heads/robot.right.png);
+}
+
+#p2think {
+    position: absolute;
+    z-index: 0;
+    width: 111px;
+    height: 115px;
+    top: 45px;
+    left: 160px;
+    background: url(pngs/thoughtbubble.png) top left no-repeat;
+    display: none;
+}
+#p2think div {
+    position: absolute;
+    top: 20px;
+    left: 32px;
+    width: 45px;
+    height: 45px;
+    background: top left no-repeat;
+}
+#p2think.c10 div { background-image: url(cards/1-0.png); }
+#p2think.c11 div { background-image: url(cards/1-1.png); }
+#p2think.c20 div { background-image: url(cards/2-0.png); }
+#p2think.c21 div { background-image: url(cards/2-1.png); }
+#p2think.c22 div { background-image: url(cards/2-2.png); }
+
+.attack {
+    position: absolute;
+    z-index: 3;
+    top: 20px;
+    left: 30px;
+    display: none;
+    width: 250px;
+    height: 300px;
+}
+.attack p {
+    background: white;
+    min-height: 95px;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0;
+    border: 2px solid red;
+}
+#p1attack p { border-color: green; }
+.attack p strong {
+    float: left;
+    display: block;
+    width: 99%;
+    text-align: center;
+    font-family: sans-serif;
+    color: red;
+}
+#p1attack p strong { color: green; }
+.attack p span {
+    display: block;
+    float: left;
+    width: 50px;
+    height: 70px;
+    border-radius: 5px;
+    border: 1px solid black;
+    background: white center center no-repeat;
+    margin-left: 20px;
+    margin-top: 4px;
+}
+.attack p span.c10 { background-image: url(cards/1-0.png); }
+.attack p span.c11 { background-image: url(cards/1-1.png); }
+.attack p span.c20 { background-image: url(cards/2-0.png); }
+.attack p span.c21 { background-image: url(cards/2-1.png); }
+.attack p span.c22 { background-image: url(cards/2-2.png); }
+.attack p img {
+    display: block;
+    float: right;
+    margin-right: 40px;
+    margin-top: 20px;
+}
+
+#p1cards li:nth-child(1) a.blocker { 
+    -moz-transform: translateX(180px) translateY(-107px) translateZ(0); z-index: 4; 
+    -webkit-transform: translateX(180px) translateY(-107px) translateZ(0); z-index: 4; 
+    -o-transform: translateX(180px) translateY(-107px) translateZ(0); z-index: 4; 
+    -ms-transform: translateX(180px) translateY(-107px) translateZ(0); z-index: 4; 
+    transform: translateX(180px) translateY(-107px) translateZ(0); z-index: 4; 
+}
+#p1cards li:nth-child(2) a.blocker { 
+    -moz-transform: translateX(120px) translateY(-107px) translateZ(0); z-index: 4; 
+    -webkit-transform: translateX(120px) translateY(-107px) translateZ(0); z-index: 4; 
+    -o-transform: translateX(120px) translateY(-107px) translateZ(0); z-index: 4; 
+    -ms-transform: translateX(120px) translateY(-107px) translateZ(0); z-index: 4; 
+    transform: translateX(120px) translateY(-107px) translateZ(0); z-index: 4; 
+}
+#p1cards li:nth-child(3) a.blocker { 
+    -moz-transform: translateX(60px) translateY(-107px) translateZ(0); z-index: 4; 
+    -webkit-transform: translateX(0px) translateY(-107px) translateZ(0); z-index: 4; 
+    -o-transform: translateX(60px) translateY(-107px) translateZ(0); z-index: 4; 
+    -ms-transform: translateX(60px) translateY(-107px) translateZ(0); z-index: 4; 
+    transform: translateX(60px) translateY(-107px) translateZ(0); z-index: 4; 
+}
+#p1cards li:nth-child(4) a.blocker { 
+    -moz-transform: translateX(0px) translateY(-107px) translateZ(0); z-index: 4; 
+    -webkit-transform: translateX(0px) translateY(-107px) translateZ(0); z-index: 4; 
+    -o-transform: translateX(0px) translateY(-107px) translateZ(0); z-index: 4; 
+    -ms-transform: translateX(0px) translateY(-107px) translateZ(0); z-index: 4; 
+    transform: translateX(0px) translateY(-107px) translateZ(0); z-index: 4; 
+}
+#p1cards li:nth-child(5) a.blocker { 
+    -moz-transform: translateX(-60px) translateY(-107px) translateZ(0); z-index: 4; 
+    -webkit-transform: translateX(-60px) translateY(-107px) translateZ(0); z-index: 4; 
+    -o-transform: translateX(-60px) translateY(-107px) translateZ(0); z-index: 4; 
+    -ms-transform: translateX(-60px) translateY(-107px) translateZ(0); z-index: 4; 
+    transform: translateX(-60px) translateY(-107px) translateZ(0); z-index: 4; 
+}
+#p2cards li:nth-child(1) a.blocker { 
+    -moz-transform: translateX(180px) translateY(-187px) translateZ(0); z-index: 4; 
+    -webkit-transform: translateX(180px) translateY(-187px) translateZ(0); z-index: 4; 
+    -o-transform: translateX(180px) translateY(-187px) translateZ(0); z-index: 4; 
+    -ms-transform: translateX(180px) translateY(-187px) translateZ(0); z-index: 4; 
+    transform: translateX(180px) translateY(-187px) translateZ(0); z-index: 4; 
+}
+#p2cards li:nth-child(2) a.blocker { 
+    -moz-transform: translateX(120px) translateY(-187px) translateZ(0); z-index: 4; 
+    -webkit-transform: translateX(120px) translateY(-187px) translateZ(0); z-index: 4; 
+    -o-transform: translateX(120px) translateY(-187px) translateZ(0); z-index: 4; 
+    -ms-transform: translateX(120px) translateY(-187px) translateZ(0); z-index: 4; 
+    transform: translateX(120px) translateY(-187px) translateZ(0); z-index: 4; 
+}
+#p2cards li:nth-child(3) a.blocker { 
+    -moz-transform: translateX(60px) translateY(-187px) translateZ(0); z-index: 4; 
+    -webkit-transform: translateX(0px) translateY(-187px) translateZ(0); z-index: 4; 
+    -o-transform: translateX(60px) translateY(-187px) translateZ(0); z-index: 4; 
+    -ms-transform: translateX(60px) translateY(-187px) translateZ(0); z-index: 4; 
+    transform: translateX(60px) translateY(-187px) translateZ(0); z-index: 4; 
+}
+#p2cards li:nth-child(4) a.blocker { 
+    -moz-transform: translateX(0px) translateY(-187px) translateZ(0); z-index: 4; 
+    -webkit-transform: translateX(0px) translateY(-187px) translateZ(0); z-index: 4; 
+    -o-transform: translateX(0px) translateY(-187px) translateZ(0); z-index: 4; 
+    -ms-transform: translateX(0px) translateY(-187px) translateZ(0); z-index: 4; 
+    transform: translateX(0px) translateY(-187px) translateZ(0); z-index: 4; 
+}
+#p2cards li:nth-child(5) a.blocker { 
+    -moz-transform: translateX(-60px) translateY(-187px) translateZ(0); z-index: 4; 
+    -webkit-transform: translateX(-60px) translateY(-187px) translateZ(0); z-index: 4; 
+    -o-transform: translateX(-60px) translateY(-187px) translateZ(0); z-index: 4; 
+    -ms-transform: translateX(-60px) translateY(-187px) translateZ(0); z-index: 4; 
+    transform: translateX(-60px) translateY(-187px) translateZ(0); z-index: 4; 
+}
+
+#blocked {
+    position: absolute;
+    top: 30px;
+    left: 42px;
+    z-index: 5;
+    display: none;
+    opacity: 1.0;
+}
+#blocked.gone {
+    -moz-transition: opacity 0.5s ease;
+    opacity: 0;    
+}
+
+#gameover div {
+    display: none;
+    position: absolute;
+    z-index: 4;
+    top: 20px;
+    left: 16px;
+    display: none;
+    width: 262px;
+    height: 370px;
+    background: white;
+    min-height: 95px;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0;
+    border: 2px solid red;
+    text-align: center;
+    font-size: 24px;
+    font-family: Ubuntu, sans-serif;
+    line-height: 370px;
+}
+
+#tutorial {
+    color: #ffff00;
+    text-shadow: -1px 1px 0px black;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 5;
+    width: 320px;
+    height: 450px;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+#tutorial p {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    top: 300px;
+    background: rgba(0,0,255,0.5);
+    padding: 5px;
+    border-radius: 10px;
+}
+
+#tutorial #tapcol {
+    top: 30px;
+    left: 160px;
+    width: 130px;
+    height: 80px;
+    text-align: center;
+}
+
+#tutorial #killthis {
+    top: 210px;
+    left: 80px;
+    width: 140px;
+    height: 70px;
+    text-align: right;
+}
+
+#tutorial #thesecards {
+    top: 350px;
+    left: 30px;
+    width: 230px;
+    height: 60px;
+    text-align: center;
+    background: rgba(0,0,255,0.7);
+}
+
+</style>
+</head>
+<body class="game">
+<div id="banner" class="beginning">choose your warrior</div>
+<a id="play" class="beginning" href="#">play</a>
+<div id="p1" class="game_and_beginning"></div><div id="p2" class="game_and_beginning"></div>
+<div id="p2think"><div></div></div>
+<div id="p2attack" class="attack"><img src="kaboom.png"><p><strong>Defend if you can!</strong><span></span> <img src="countdown.gif"></p></div>
+<div id="p1attack" class="attack"><img src="kaboom.png"><p><strong>Can he defend?</strong><span></span></p></div>
+<div id="gameover">
+    <div id="p1win">&uArr; Victory! &uArr;</div>
+    <div id="p2win">&dArr; Defeat! &dArr;</div>
+    <div id="p1p2draw">&uArr; A draw! &dArr;</div>
+</div>
+<div id="tutorial" class="game">
+    <p id="tapcol">tap any coloured square to move there</p>
+    <p id="killthis">kill this guy by tapping his square when you can</p>
+    <p id="thesecards">coloured cards show which moves you can make. tap one to defend</p>
+</div>
+<img id="blocked" src="crossed_swords.png"></div>
+<table id="board" class="game">
+    <tr>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+    </tr>
+    <tr>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+    </tr>
+    <tr>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+    </tr>
+    <tr>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+    </tr>
+    <tr>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+        <td><a href="#"></a></td>
+    </tr>
+</table>
+<ul id="p1cards" class="cards game">
+    <li><a href="#"></a></li>
+    <li><a href="#"></a></li>
+    <li><a href="#"></a></li>
+    <li><a href="#"></a></li>
+    <li><a href="#"></a></li>
+</ul>
+<ul id="p2cards" class="cards game">
+    <li><a href="#"></a></li>
+    <li><a href="#"></a></li>
+    <li><a href="#"></a></li>
+    <li><a href="#"></a></li>
+    <li><a href="#"></a></li>
+</ul>
+<ul id="choices" class="beginning">
+    <li><a href="#"><img src="pngs/heads/dwarf.left.png" alt="dwarf"></a></li>
+    <li><a href="#"><img src="pngs/heads/superheroine1.left.png" alt="dwarf"></a></li>
+    <li><a href="#"><img src="pngs/heads/viking.left.png" alt="dwarf"></a></li>
+    <li><a href="#"><img src="pngs/heads/knight.left.png" alt="dwarf"></a></li>
+    <li><a href="#"><img src="pngs/heads/spacearmour1.left.png" alt="dwarf"></a></li>
+    <li><a href="#"><img src="pngs/heads/superheroine2.left.png" alt="dwarf"></a></li>
+    <li><a href="#"><img src="pngs/heads/robot.left.png" alt="dwarf"></a></li>
+    <li><a href="#"><img src="pngs/heads/spacearmour2.left.png" alt="dwarf"></a></li>
+</ul>
+<p id="scores" class="beginning">
+&uArr; <span id="wins">0</span> &middot;
+&dArr; <span id="losses">0</span> &middot;
+&uArr;&dArr; <span id="draws">0</span>
+</p>
+
+<script>
+(function() {
+
+    soundManager.debugMode = true;
+    soundManager.url = 'sm2/swf/';
+    soundManager.flashVersion = 9; // optional: shiny features (default = 8)
+    soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
+    /*
+     * read up on HTML5 audio support, if you're feeling adventurous.
+     * iPad/iPhone and devices without flash installed will always attempt to use it.
+    */
+    soundManager.onready(function() {
+        // Ready to use; soundManager.createSound() etc. can now be called.
+        var soundnames = ["p1attack", "p2attack", "p1losecardp2takecard",
+                          "p2losecardp1takecard", "p1takecard", "p2takecard",
+                          "p1win", "p2win"
+                         ];
+        for (var i=0; i<soundnames.length; i++) {
+            soundManager.createSound({
+                id: soundnames[i],
+                url: 'sounds/' + soundnames[i] + '.mp3',
+                autoLoad: true,
+                autoPlay: false,
+                onload: function() {
+                    console.log('The sound '+this.sID+' loaded!');
+                }
+            });
+        }
+    });
+
+    var pressevent = "click";
+    if ('ontouchstart' in document.documentElement) {
+        pressevent = "touchstart";
+    }
+
+    removeClass = function(el, cn) {
+        var reg = new RegExp('(\\s|^)'+cn+'(\\s|$)', "g");
+        el.className = el.className.replace(reg, " ");
+    };
+    
+    hasClass = function(el, cn) {
+        return el.className.match(new RegExp('(\\s|^)'+cn+'(\\s|$)'));
+    };
+
+    /* beginning screen */
+
+    document.getElementById("choices").addEventListener(pressevent, function(e) {
+        var src;
+        if (e.target.src) {
+            src = e.target.src;
+        } else {
+            src = e.target.getElementsByTagName("img")[0].src;
+        }
+        document.getElementById("p1").style.backgroundImage = "url(" + src.replace("heads", "bodies") + ")";
+        
+        // and set the head squares
+        if (!document.styleSheets) return;
+        var theRules;
+	    if (document.styleSheets[0].cssRules)
+    		theRules = document.styleSheets[0].cssRules
+    	else if (document.styleSheets[0].rules)
+    		theRules = document.styleSheets[0].rules
+    	else return;
+    	
+    	for (var i=0; i<theRules.length; i++) {
+    	    if (theRules[i].selectorText == "#board a.p1") {
+    	        theRules[i].style.backgroundImage = "url(" + src + ")";
+    	        break;
+    	    }
+    	}
+    	
+        e.preventDefault();
+    }, false);
+
+    document.getElementById("play").addEventListener(pressevent, function(e) {
+        if (localStorage.getItem("semichins-tutorial") == "hide") {
+            document.getElementById("tutorial").style.display = "none";
+        }
+        document.body.className = "game";
+        STATES.transition("p1moveshighlightordraw", {});
+        e.preventDefault();
+    }, false);
+
+    document.getElementById("gameover").addEventListener(pressevent, function(e) {
+        e.target.style.display = "none";
+        STATES.transition("START", {});
+        e.preventDefault();
+    }, false);
+
+    /* setup for game screen */
+
+    function Card(cardid) {
+        var that = this;
+        this.asClass = "c" + cardid;
+        this.x = parseInt(cardid[0], 10);
+        this.y = parseInt(cardid[1], 10);
+        this.cardId = cardid;
+    }
+
+    var deck, p2_deck_record, p1position, p2position;
+
+    var p1cards = [], p2cards = [];
+    var cardulp1 = document.getElementById("p1cards");
+    var cardulp2 = document.getElementById("p2cards");
+    var cardap1 = cardulp1.getElementsByTagName("a");
+    var cardap2 = cardulp2.getElementsByTagName("a");
+    
+    var boardtable = document.getElementById("board");
+    var board = [];
+    for (var r=0; r<boardtable.rows.length; r++) {
+        var row = [];
+        for (var c=0; c<boardtable.rows[r].cells.length; c++) {
+            var a = boardtable.rows[r].cells[c].getElementsByTagName("a")[0];
+            a.locationX = c; a.locationY = r;
+            row.push(a);
+        }
+        board.push(row);
+    }
+
+    boardtable.addEventListener("mouseover", function(e) {
+        if (e.target.nodeName.toLowerCase() == "a" && e.target.className != "" && e.target.className.match(/(\s|^)c/)) {
+            cardulp1.className += " " + e.target.className;
+        }
+    }, false);
+    boardtable.addEventListener("mouseout", function(e) {
+        if (e.target.nodeName.toLowerCase() == "a" && e.target.className != "" && e.target.className.match(/(\s|^)c/)) {
+            removeClass(cardulp1, e.target.className);
+        }
+    }, false);
+    boardtable.addEventListener(pressevent, function(e) {
+        if (e.target.nodeName.toLowerCase() == "a") {
+            e.preventDefault();
+            if (STATES.STATE == "p1move" && e.target.className != "" && e.target.className.match(/(\s|^)c/)) {
+            
+                localStorage.setItem("semichins-tutorial", "hide");
+                document.getElementById("tutorial").style.display = "none";
+
+                // unhighlight squares
+                removeClass(cardulp1, e.target.cardAsClass);
+                for (var i=0; i<STATES.p1move.highlighted.length; i++) {
+                    if (STATES.p1move.highlighted[i]) {
+                        removeClass(STATES.p1move.highlighted[i][0], STATES.p1move.highlighted[i][1]);
+                    }
+                }
+                
+                // now actually look at moving
+                if (e.target.locationX == p2position[0] && e.target.locationY == p2position[1]) {
+                    // an attack!
+                    STATES.transition("p1attack", { card: p1cards[e.target.cardIndex], cardIndex: e.target.cardIndex });
+                } else {
+                    removeClass(board[p1position[1]][p1position[0]], "p1");
+                    p1position = [e.target.locationX, e.target.locationY];
+                    board[p1position[1]][p1position[0]].className = "p1";
+                    STATES.transition("p1takecard", { remove: e.target.cardIndex });
+                }
+            }
+        }
+    }, false);
+    
+    cardulp1.addEventListener(pressevent, function(e) {
+        if (e.target.nodeName.toLowerCase() == "a") {
+            e.preventDefault();
+            e.target.blur();
+            if (STATES.STATE == "p2attack" && hasClass(e.target, STATES.p2attack.attackingMove.card.asClass)) {
+                soundManager.stop("p2attack");
+                clearTimeout(STATES.p2attack.tooSlowTimer);
+                e.target.className += " blocker";
+                setTimeout(function() {
+                    e.target.className = ""; // remove both blocker (it moves back) and cardname (filled in next)
+                    document.getElementById("p2attack").style.display = "none";
+                    document.getElementById("blocked").style.display = "block";
+                    setTimeout(function() {
+                        document.getElementById("blocked").className = "gone";
+                        setTimeout(function() {
+                            document.getElementById("blocked").style.display = "none";
+                            document.getElementById("blocked").className = "";
+                        }, 200);
+                    }, 1000);
+                    STATES.transition("p2losecardp1takecard", { 
+                        p2losingMove: STATES.p2attack.attackingMove,
+                        p1cardIndex: e.target.cardIndex
+                    });
+                }, 1000);
+                
+            }
+        }
+    }, false);
+    
+    /* The state machine that runs everything */
+    
+    var STATES = {
+        STATE: "START",
+        transition: function(state, options) {
+            // are they allowed to transition there from current state?
+            var allowed = false;
+            for (var i=0; i<STATES[STATES.STATE].transitions.length; i++) {
+                if (STATES[STATES.STATE].transitions[i] == state) {
+                    allowed = true;
+                    break;
+                }
+            }
+            if (options.force_allow_transition) allowed = true;
+            if (!allowed) {
+                console.log("Disallowed state transition from " + STATES.STATE +
+                    " to " + state);
+                return;
+            }
+            // yes. Actually transition, via setTimeout so there isn't a 
+            // huge call chain to unwind and return through and it's background.
+            STATES.STATE = state;
+            setTimeout(function() { STATES[state].exe(options); }, 0);
+        },
+        START: {
+            exe: function() {
+                // set up game
+                deck = [];
+                for (var i=0; i<5; i++) {
+                    deck.push(new Card("10"));
+                    deck.push(new Card("20"));
+                    deck.push(new Card("21"));
+                    deck.push(new Card("22"));
+                }
+                p2_deck_record = [];
+                for (var i=0; i<deck.length; i++) {
+                    p2_deck_record.push(new Card(deck[i].cardId));
+                }
+                
+                // fisher yates shuffle, http://dtm.livejournal.com/38725.html
+                var i, j, t;
+                for (i = 1; i < deck.length; i++) {
+                    j = Math.floor(Math.random()*(1+i));  // choose j in [0..i]
+                    if (j != i) {
+                        t = deck[i];                      // swap list[i] and list[j]
+                        deck[i] = deck[j];
+                        deck[j] = t;
+                    }
+                }
+                
+                p1cards = []; p2cards = [];
+
+                for (var i=0; i<5; i++) {
+                    p1cards.push(deck.shift());
+                    p2cards.push(deck.shift());
+                    cardap1[i].className = p1cards[p1cards.length-1].asClass;
+                    cardap1[i].cardIndex = i;
+                    cardap1[i].style.visibility = "visible";
+                    cardap2[i].style.visibility = "visible";
+                }
+                
+                for (var r=0; r<board.length; r++) {
+                    for (var c=0; c<board[r].length; c++) {
+                        board[r][c].className = "";
+                    }
+                }
+
+                p1position = [0,0]; p2position = [4,4];
+                board[p1position[0]][p1position[1]].className = "p1";
+                board[p2position[0]][p2position[1]].className = "p2";
+                
+                var wins = parseInt(localStorage.getItem("semichins-wins"), 10);
+                if (!wins) {
+                    wins = 0;
+                    localStorage.setItem("semichins-wins", 0);
+                }
+                var losses = parseInt(localStorage.getItem("semichins-losses"), 10);
+                if (!losses) {
+                    losses = 0;
+                    localStorage.setItem("semichins-losses", 0);
+                }
+                var draws = parseInt(localStorage.getItem("semichins-draws"), 10);
+                if (!draws) {
+                    draws = 0;
+                    localStorage.setItem("semichins-draws", 0);
+                }
+                document.getElementById("wins").innerHTML = wins;
+                document.getElementById("losses").innerHTML = losses;
+                document.getElementById("draws").innerHTML = draws;
+                
+                // show choose-your-warrior
+                document.body.className = "beginning";
+                // continue with play pressevent handler above
+            },
+            transitions: [ "p1moveshighlightordraw" ]
+        },
+        p1moveshighlightordraw: {
+            exe: function() {
+                var hascards = false;
+                for (var i=0; i<p1cards.length; i++) {
+                    if (p1cards[i] !== undefined && p1cards[i] !== null) {
+                        hascards = true;
+                        break;
+                    }
+                }
+                if (!hascards) {
+                    STATES.transition("draw", { out_of_cards: "p1" });
+                    return;
+                }
+                
+                var hi = function(x, y, card, cardidx) {
+                    if (x < 0 || x >= board[0].length || y < 0 || y >= board.length) return;
+                    if (!hasClass(board[y][x], card.asClass)) {
+                        board[y][x].className += " " + card.asClass;
+                        board[y][x].cardAsClass = card.asClass;
+                        board[y][x].cardIndex = cardidx;
+                    }
+                    return [board[y][x], card.asClass];
+                };
+                
+                var done = {};
+                var highlighted = [];
+                for (var i=0; i<p1cards.length; i++) {
+                    if (!p1cards[i]) continue;
+                    if (p1cards[i].asClass in done) continue;
+                    done[p1cards[i].asClass] = "";
+                    highlighted.push(hi(p1position[0] + p1cards[i].x, p1position[1] + p1cards[i].y, p1cards[i], i));
+                    highlighted.push(hi(p1position[0] + p1cards[i].x, p1position[1] - p1cards[i].y, p1cards[i], i));
+                    highlighted.push(hi(p1position[0] - p1cards[i].x, p1position[1] + p1cards[i].y, p1cards[i], i));
+                    highlighted.push(hi(p1position[0] - p1cards[i].x, p1position[1] - p1cards[i].y, p1cards[i], i));
+                    highlighted.push(hi(p1position[0] + p1cards[i].y, p1position[1] + p1cards[i].x, p1cards[i], i));
+                    highlighted.push(hi(p1position[0] + p1cards[i].y, p1position[1] - p1cards[i].x, p1cards[i], i));
+                    highlighted.push(hi(p1position[0] - p1cards[i].y, p1position[1] + p1cards[i].x, p1cards[i], i));
+                    highlighted.push(hi(p1position[0] - p1cards[i].y, p1position[1] - p1cards[i].x, p1cards[i], i));
+                }
+                STATES.transition("p1move", {highlighted: highlighted});
+            },
+            transitions: ["p1move", "draw"]
+        },
+        p1move: {
+            exe: function(options) {
+                // pretty much nothing happens here; it all happens in the
+                // mouseover, mouseout, click/touchstart handlers on boardtable
+                STATES.p1move.highlighted = options.highlighted;
+            },
+            transitions: ["p1takecard", "p1attack"]
+        },
+        p1takecard: {
+            exe: function(options) {
+                soundManager.play('p1takecard');
+                cardap1[options.remove].style.visibility = "hidden";
+                p1cards[options.remove] = deck.shift();
+                if (p1cards[options.remove]) {
+                    cardap1[options.remove].style.visibility = "visible";
+                    cardap1[options.remove].className = p1cards[options.remove].asClass;
+                }
+                STATES.transition("p2thinkordraw", {});
+            },
+            transitions: ["p2thinkordraw"]
+        },
+        p1attack: {
+            exe: function(options) {
+                soundManager.play('p1attack');
+                document.getElementById("p1attack").style.display = "block";
+                document.querySelector("#p1attack p span").className = options.card.asClass;
+                
+                // can p2 block?
+                var blocker;
+                for (var i=0; i<p2cards.length; i++) {
+                    if (p2cards[i] && (p2cards[i].cardId == options.card.cardId)) {
+                        blocker = i;
+                    }
+                }
+                if (blocker) {
+                    setTimeout(function() {
+                        cardap2[blocker].className = "blocker " + p2cards[blocker].asClass;
+                        setTimeout(function() {
+                            // remove both blocker (it moves back) and cardname (filled in next)
+                            cardap2[blocker].className = ""; 
+                            document.getElementById("p1attack").style.display = "none";
+                            document.getElementById("blocked").style.display = "block";
+                            setTimeout(function() {
+                                document.getElementById("blocked").className = "gone";
+                                setTimeout(function() {
+                                    document.getElementById("blocked").style.display = "none";
+                                    document.getElementById("blocked").className = "";
+                                }, 200);
+                            }, 1000);
+                            STATES.transition("p1losecardp2takecard", { 
+                                p1losingCard: options.card,
+                                p1losingCardIndex: options.cardIndex,
+                                p2cardIndex: blocker
+                            });
+                        }, 1000);
+                    }, 1000);
+                } else {
+                    setTimeout(function() {
+                        document.getElementById("p1attack").style.display = "none";
+                        STATES.transition("p1win", {});
+                    }, 2000);
+                }
+            },
+            transitions: ["p1win", "p1losecardp2takecard"]
+        },
+        p2thinkordraw: {
+            exe: function() {
+                var hascards = false;
+                for (var i=0; i<p2cards.length; i++) {
+                    if (p2cards[i] !== undefined && p2cards[i] !== null) {
+                        hascards = true;
+                        break;
+                    }
+                }
+                if (!hascards) {
+                    STATES.transition("draw", { out_of_cards: "p2" });
+                    return;
+                }
+
+                // thinking animation
+                
+                var p2think = document.getElementById("p2think");
+                p2think.style.display = "block";
+                var cardClasses = ["c10", "c20", "c21", "c22", "c10", "c20", "c21", "c22"];
+                var iv = function() {
+                    var nextclass = cardClasses.shift();
+                    if (nextclass === undefined) {
+                        p2think.className = "";
+                        p2think.style.display = "none";
+                        STATES.transition("p2move", {});
+                    } else {
+                        p2think.className = nextclass;
+                        setTimeout(iv, 200);
+                    }
+                };
+                setTimeout(iv, 200);
+            },
+            transitions: ["p2move"]
+        },
+        p2move: {
+            exe: function() {
+                var ev = function(x, y, card, cardidx) {
+                    // evaluate a move
+                    if (x < 0 || x >= board[0].length || y < 0 || y >= board.length) return;
+                    var mdata = {x: x, y: y, card: card, cardIndex: cardidx, weight: 1, type: "move"};
+                    if (hasClass(board[y][x], "p1")) {
+                        // I can attack!
+                        mdata.type = "attack";
+                        // do we think he can block?
+                        mdata.weight = 2;
+                    }
+                    var diff1 = Math.abs(x - p1position[0]), diff2 = Math.abs(y - p1position[1]);
+                    if (diff1 > diff2) { var t = diff1; diff1 = diff2; diff2 = t; }
+                    if ((diff1 == 0 && diff1 == 1) || (diff1 == 0 && diff1 == 2) ||
+                        (diff1 == 1 && diff1 == 2) || (diff1 == 2 && diff1 == 2)) {
+                        // somewhere I can be attacked
+                        mdata.weight = 0;
+                        // do we think he cannot attack?
+                        // if he maybe can attack, can I block that attack?
+                    }
+                    return mdata;
+                };
+
+                var done = {};
+                var moves = [];
+                for (var i=0; i<p2cards.length; i++) {
+                    if (!p2cards[i]) continue;
+                    if (p2cards[i].asClass in done) continue;
+                    done[p2cards[i].asClass] = "";
+                    moves.push(ev(p2position[0] + p2cards[i].x, p2position[1] + p2cards[i].y, p2cards[i], i));
+                    moves.push(ev(p2position[0] + p2cards[i].x, p2position[1] - p2cards[i].y, p2cards[i], i));
+                    moves.push(ev(p2position[0] - p2cards[i].x, p2position[1] + p2cards[i].y, p2cards[i], i));
+                    moves.push(ev(p2position[0] - p2cards[i].x, p2position[1] - p2cards[i].y, p2cards[i], i));
+                    moves.push(ev(p2position[0] + p2cards[i].y, p2position[1] + p2cards[i].x, p2cards[i], i));
+                    moves.push(ev(p2position[0] + p2cards[i].y, p2position[1] - p2cards[i].x, p2cards[i], i));
+                    moves.push(ev(p2position[0] - p2cards[i].y, p2position[1] + p2cards[i].x, p2cards[i], i));
+                    moves.push(ev(p2position[0] - p2cards[i].y, p2position[1] - p2cards[i].x, p2cards[i], i));
+                }
+                // collect by weight
+                var smoves = {0:[]}, maxweight = 0;
+                for (var i=0; i<moves.length; i++) {
+                    if (moves[i] !== undefined) {
+                        if (!(moves[i].weight in smoves)) {
+                            smoves[moves[i].weight] = [];
+                        }
+                        smoves[moves[i].weight].push(moves[i]);
+                        if (moves[i].weight > maxweight) maxweight = moves[i].weight;
+                    }
+                }
+                var move;
+                switch(smoves[maxweight].length) {
+                    case 0:
+                        // no available moves. Should not happen.
+                        console.log("Error: no available moves for p2.");
+                        return;
+                    case 1:
+                        move = smoves[maxweight][0];
+                        break;
+                    default:
+                        move = smoves[maxweight][Math.floor(Math.random()*smoves[maxweight].length)];
+                }
+                if (move.type == "attack") {
+                    STATES.transition("p2attack", { move: move });
+                } else {
+                    removeClass(board[p2position[1]][p2position[0]], "p2");
+                    p2position = [move.x, move.y];
+                    board[p2position[1]][p2position[0]].className = "p2";
+                    STATES.transition("p2takecard", { remove: move.cardIndex });                    
+                }
+            },
+            transitions: ["p2takecard", "p2attack"]
+        },
+        p2takecard: {
+            exe: function(options) {
+                soundManager.play('p2takecard');
+                cardap2[options.remove].style.visibility = "hidden";
+                p2cards[options.remove] = deck.shift();
+                if (p2cards[options.remove]) {
+                    cardap2[options.remove].style.visibility = "visible";
+                }
+                STATES.transition("p1moveshighlightordraw", {});
+            },
+            transitions: ["p1moveshighlightordraw"]
+        },
+        p2attack: {
+            exe: function(options) {
+                document.getElementById("p2attack").style.display = "block";
+                document.querySelector("#p2attack p span").className = options.move.card.asClass;
+                var img = document.querySelector("#p2attack p img");
+                // reset countdown image
+                var im2 = document.createElement("img");
+                im2.src = ""
+                img.parentNode.insertBefore(im2, img);
+                im2.src = img.src;
+                img.parentNode.removeChild(img);
+                im2.style.border = "1px solid red";
+                STATES.p2attack.tooSlowTimer = setTimeout(function() { 
+                    document.getElementById("p2attack").style.display = "none";
+                    STATES.transition("p2win", {});
+                }, 4000);
+                STATES.p2attack.attackingMove = options.move;
+                soundManager.play('p2attack');
+                // and now, execution (if p1 blocks) picks up in the p1cards pressevent handler above
+            },
+            transitions: ["p2win", "p2losecardp1takecard"]
+        },
+        p2losecardp1takecard: {
+            exe: function(options) {
+                // p1 takes a card
+                soundManager.play('p2losecardp1takecard');
+                cardap1[options.p1cardIndex].style.visibility = "hidden";
+                p1cards[options.p1cardIndex] = deck.shift();
+                if (p1cards[options.p1cardIndex]) {
+                    cardap1[options.p1cardIndex].style.visibility = "visible";
+                    cardap1[options.p1cardIndex].className = p1cards[options.p1cardIndex].asClass;
+                }
+                // p2 loses a card
+                p2cards[options.p2losingMove.cardIndex] = null;
+                cardap2[options.p2losingMove.cardIndex].style.visibility = "hidden";
+                STATES.transition("p1moveshighlightordraw", {});
+            },
+            transitions: ["p1moveshighlightordraw"]
+        },
+        p1losecardp2takecard: {
+            exe: function(options) {
+                // p2 takes a card
+                soundManager.play('p1losecardp2takecard');
+                cardap2[options.p2cardIndex].style.visibility = "hidden";
+                p2cards[options.p2cardIndex] = deck.shift();
+                if (p2cards[options.p2cardIndex]) {
+                    cardap2[options.p2cardIndex].style.visibility = "visible";
+                }
+                // p1 loses a card
+                p1cards[options.p1losingCardIndex] = null;
+                cardap1[options.p1losingCardIndex].style.visibility = "hidden";
+                setTimeout(function() { STATES.transition("p2thinkordraw", {}); }, 1000);
+            },
+            transitions: ["p2thinkordraw"]
+        },
+        draw: {
+            exe: function(options) {
+                var draws = parseInt(localStorage.getItem("semichins-draws"), 10);
+                if (!draws) {
+                    draws = 0;
+                }
+                draws += 1;
+                localStorage.setItem("semichins-draws", draws);
+                document.body.className = "beginning";
+                document.getElementById("p1p2draw").style.display = "block"; // continue in gameover click handler
+            },
+            transitions: ["START"]
+        },
+        p2win: {
+            exe: function() {
+                soundManager.play('p2win');
+                var losses = parseInt(localStorage.getItem("semichins-losses"), 10);
+                if (!losses) {
+                    losses = 0;
+                }
+                losses += 1;
+                localStorage.setItem("semichins-losses", losses);
+                document.body.className = "beginning";
+                document.getElementById("p2win").style.display = "block"; // continue in gameover click handler
+            },
+            transitions: ["START"]
+        },
+        p1win: {
+            exe: function() {
+                soundManager.play('p1win');
+                var wins = parseInt(localStorage.getItem("semichins-wins"), 10);
+                if (!wins) {
+                    wins = 0;
+                }
+                wins += 1;
+                localStorage.setItem("semichins-wins", wins);
+                document.body.className = "beginning";
+                document.getElementById("p1win").style.display = "block"; // continue in gameover click handler
+            },
+            transitions: ["START"]
+        }
+        
+    };
+    
+    /* and... let's begin. */
+    STATES.transition("START", {force_allow_transition: true});
+    
+})();
+</script>
+</body>
+</html>
+
+
+
+
